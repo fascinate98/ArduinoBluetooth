@@ -124,13 +124,11 @@ class Repository {
                             val device_Address = device.address
                             
                             // It only searches for devices with the prefix "RNM" in the Bluetooth device name.
-                            if (device_name != null && device_name.length > 4) {
-                                if (device_name.substring(0, 3) == "SSI") {
-                                    // filter your targetDevice and use connectToTargetedDevice()
-                                    targetDevice = device
-                                    foundDevice = true
-                                    connectToTargetedDevice(targetDevice)
-                                }
+                            if (device_name == "BT06") {
+                                // filter your targetDevice and use connectToTargetedDevice()
+                                targetDevice = device
+                                foundDevice = true
+                                connectToTargetedDevice(targetDevice)
                             }
                             
                         }
@@ -278,41 +276,44 @@ class Repository {
                                 var h = arr[1]
                                 var d = arr[2]
                                 //putTxt.postValue(t)
-                                val apiInterface = RetrofitInstance.getRetrofitInstance()
-                                val jsonData: JsonObject = JsonObject().apply {
-                                    //loginData.value?.userId.toString()
-                                    addProperty("arduinoTemp", "2" + t)
-                                    addProperty("arduinoHumid", h)
-                                    addProperty("arduinoDist", d)
-                                }
+                                if(d.toInt() > 0){
+                                    val apiInterface = RetrofitInstance.getRetrofitInstance()
+                                    val jsonData: JsonObject = JsonObject().apply {
+                                        //loginData.value?.userId.toString()
+                                        addProperty("arduinoTemp", "2" + t)
+                                        addProperty("arduinoHumid", h)
+                                        addProperty("arduinoDist", d)
+                                    }
 
 //                                Log.d("ddd", "sdfsdfsdfsdfs : " + jsonData)
 
-                                var service: ApiInterface = apiInterface.create(ApiInterface::class.java)
+                                    var service: ApiInterface = apiInterface.create(ApiInterface::class.java)
 
-                                service.requestLogin(jsonData).enqueue(object:
-                                    Callback<ResponseData> {
-                                    override fun onFailure(call: Call<ResponseData>, t: Throwable) {
-                                        //todo 실패처리
-                                        Log.d(ContentValues.TAG, t.toString() + "응애응애 실패야")
-                                    }
-
-                                    override fun onResponse(
-                                        call: Call<ResponseData>,
-                                        response: Response<ResponseData>
-                                    ) {
-                                        //todo 성공처리
-                                        Log.d(ContentValues.TAG, "응애응애 성공이야222")
-                                        if (response.isSuccessful.not()) {
-                                            Log.d(ContentValues.TAG, "응애응애 실패야222")
-                                            return
+                                    service.requestLogin(jsonData).enqueue(object:
+                                        Callback<ResponseData> {
+                                        override fun onFailure(call: Call<ResponseData>, t: Throwable) {
+                                            //todo 실패처리
+                                            Log.d(ContentValues.TAG, t.toString() + "응애응애 실패야")
                                         }
-                                        response.body()?.let {
-                                            //body가 있다면 그안에는 bestSellerDto가 들어있을것
 
+                                        override fun onResponse(
+                                            call: Call<ResponseData>,
+                                            response: Response<ResponseData>
+                                        ) {
+                                            //todo 성공처리
+                                            Log.d(ContentValues.TAG, "응애응애 성공이야222")
+                                            if (response.isSuccessful.not()) {
+                                                Log.d(ContentValues.TAG, "응애응애 실패야222")
+                                                return
+                                            }
+                                            response.body()?.let {
+                                                //body가 있다면 그안에는 bestSellerDto가 들어있을것
+
+                                            }
                                         }
-                                    }
-                                })
+                                    })
+                                }
+
                             }
 
                             /**
